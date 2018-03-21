@@ -25,7 +25,8 @@ func SetBits(ip net.IP, bits uint64, startOffset, setWidth uint) (net.IP, error)
 		return newIP, ErrOutOfRange
 	}
 
-	bits &= ^uint64(0) >> uint(64-setWidth)
+	maskBits := ^uint64(0) >> uint(64-setWidth)
+	bits &= maskBits
 
 	for i, b := range ip {
 		newIP[i] = b
@@ -33,13 +34,13 @@ func SetBits(ip net.IP, bits uint64, startOffset, setWidth uint) (net.IP, error)
 			shift := int(startOffset+setWidth) - (i+1)*8
 			var t, mask byte
 			if shift > 0 {
-				mask = byte(^uint64(0) >> uint(shift) & 0x0ff)
+				mask = byte(maskBits >> uint(shift) & 0x0ff)
 				t = byte(bits>>uint(shift)) & mask
 			} else {
-				mask = byte(^uint64(0) << uint(-1*shift) & 0x0ff)
+				mask = byte(maskBits << uint(-1*shift) & 0x0ff)
 				t = byte(bits<<uint(-1*shift)) & mask
 			}
-			newIP[i] = b&mask | t
+			newIP[i] = b&^mask | t
 		}
 	}
 	return newIP, nil
