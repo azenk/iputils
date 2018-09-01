@@ -17,6 +17,7 @@ func TestSetBits(t *testing.T) {
 
 	testCases := []ipSetTestCase{
 		ipSetTestCase{net.ParseIP("10.0.0.0"), 0xff, 16, 8, net.ParseIP("10.0.255.0"), nil},
+		ipSetTestCase{net.ParseIP("10.2.3.64").To4(), 0x8e28f0ef6bafe9fb, 28, 4, net.ParseIP("10.2.3.75"), nil},
 		ipSetTestCase{net.ParseIP("10.0.15.0"), 0xff0, 12, 12, net.ParseIP("10.15.240.0"), nil},
 		ipSetTestCase{net.ParseIP("2001:db8:0:1::"), 0xffffffff, 64, 32, net.ParseIP("2001:db8:0:1:ffff:ffff::"), nil},
 		ipSetTestCase{net.ParseIP("2001:db8:0:1::"), 0xffffffff, 66, 32, net.ParseIP("2001:db8:0:1:3fff:ffff:c000:0"), nil},

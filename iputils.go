@@ -12,16 +12,21 @@ var (
 // SetBits sets the bits starting at startOffset and ending at startOffset + setWidth
 // to the bits specified.
 func SetBits(ip net.IP, bits uint64, startOffset, setWidth uint) (net.IP, error) {
-	newIP := make([]byte, 16)
+	var newIP []byte
 
-	if ip.To4() != nil {
+	var size uint
+	if v4ip := ip.To4(); v4ip != nil {
+		ip = v4ip
+		newIP = make([]byte, 4)
 		copy(newIP, net.IPv4zero)
-		startOffset = startOffset + 96
+		size = 32
 	} else {
+		newIP = make([]byte, 16)
 		copy(newIP, net.IPv6zero)
+		size = 128
 	}
 
-	if startOffset+setWidth > 128 {
+	if startOffset+setWidth > size {
 		return newIP, ErrOutOfRange
 	}
 
